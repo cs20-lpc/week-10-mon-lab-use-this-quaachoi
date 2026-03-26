@@ -25,16 +25,6 @@ ArrayListDictionary<Key, Val>::~ArrayListDictionary() {
 }
 
 template <typename Key, typename Val>
-Val ArrayListDictionary<Key, Val>::binSearchIter(const Key& target, int left, int right) const {
-    // TODO
-}
-
-template <typename Key, typename Val>
-Val ArrayListDictionary<Key, Val>::binSearchRec(const Key& target, int left, int right) const {
-    // TODO
-}
-
-template <typename Key, typename Val>
 void ArrayListDictionary<Key, Val>::clear() {
     list->clear();
 }
@@ -49,10 +39,10 @@ Val ArrayListDictionary<Key, Val>::find(const Key& k) const {
     numComps = 0;
 
     try {
-        return seqSearchIter(k);
+        // return seqSearchIter(k);
         // return seqSearchRec(k);
         // return binSearchIter(k, 0, list->getLength() - 1);
-        // return binSearchRec(k, 0, list->getLength() - 1);
+        return binSearchRec(k, 0, list->getLength() - 1);
     }
     catch (...) {
         throw string("find: error, unsuccessful search, target key not found");
@@ -88,12 +78,85 @@ void ArrayListDictionary<Key, Val>::remove(const Key& k) {
 
 template <typename Key, typename Val>
 Val ArrayListDictionary<Key, Val>::seqSearchIter(const Key& target) const {
-    // TODO
+    for(int i = 0; i < list->getMaxSize(); i++)
+    {
+        this->numComps++;
+        if(list->getElement(i).k == target)
+        {
+            return list->getElement(i).v;
+        }
+    }
+    throw runtime_error("Element does not exist");
 }
 
 template <typename Key, typename Val>
 Val ArrayListDictionary<Key, Val>::seqSearchRec(const Key& target, int i) const {
     // TODO
+    this->numComps++;
+    if(i < list->getMaxSize())
+    {
+        if(list->getElement(i).k == target)
+        {
+            return list->getElement(i).v;
+        }
+        return seqSearchRec(target, i + 1);
+    }
+    throw runtime_error("Element does not exist");
+}
+
+template <typename Key, typename Val>
+Val ArrayListDictionary<Key, Val>::binSearchIter(const Key& target, int left, int right) const {
+    // TODO
+    int low = left;
+    int high = right;
+    int mid = 0;
+
+    while(low <= high)
+    {
+        this->numComps++;
+        mid = (int)(low + high)/2;
+
+        if(list->getElement(mid).k == target)
+        {
+            return list->getElement(mid).v;
+        }
+
+        if(list->getElement(mid).k < target)
+        {
+            low = mid+1;
+        }
+        else
+        {
+            high = mid-1;
+        }
+    }
+
+    throw runtime_error("Element does not exist");
+}
+
+template <typename Key, typename Val>
+Val ArrayListDictionary<Key, Val>::binSearchRec(const Key& target, int left, int right) const {
+    // TODO
+    if(left > right)
+    {
+        throw runtime_error("Element does not exist");
+    }
+    this->numComps++;
+
+    int mid = (int)(left + right)/2;
+    
+    if (list->getElement(mid).k == target) {
+        return list->getElement(mid).v;
+    }
+
+    if (list->getElement(mid).k < target) 
+    {
+        return binSearchRec(target, mid + 1, right);
+    } 
+    else 
+    {
+        return binSearchRec(target, left, mid - 1);
+    }
 }
 
 template <typename Key, typename Val>
